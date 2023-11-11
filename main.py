@@ -54,6 +54,7 @@ def handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, dx):
     player_received = []
     pet1_collided = []
     pet2_collided = []
+    
     for obj in objects:
         if pygame.sprite.collide_mask(player, obj):
             player_collided.append(obj)
@@ -135,55 +136,54 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
         npc.make_teleport()
         teleport_sound.play()
     
-    
-
-
 
 
 # Draw everything on the screen
 def draw(window, background, player, npc, enemies, pet1, pet2, items, objects, offset_x, background_scroll_x, condition_bar):
+    
     window.blit(background, (background_scroll_x, 0))
     window.blit(background, (background_scroll_x + background.get_width(), 0))
 
     for obj in objects:
         obj.draw(window, offset_x)
-
     for enemy in enemies:
         enemy.draw(window, offset_x)
+    for item in items: 
+        item.draw(window, offset_x)
+    
     player.draw(window, offset_x)
     npc.draw(window, offset_x)
     pet1.draw(window, offset_x)
     pet2.draw(window, offset_x)
-    for item in items: item.draw(window, offset_x)
-
+ 
     window.blit(condition_bar, (-16, HEIGHT - condition_bar.get_height() + 20 ))
     
     pygame.display.update()
 
 def main(window):
-    clock = pygame.time.Clock()
+    clock      = pygame.time.Clock()
     background = get_background("Blue.png")
     block_size = 96
-    player = Player(100, 100, 50, 50, "VirtualGuy")
-    npc = NPC(200 , HEIGHT - block_size*5, 50, 50, "PinkMan")
-    enemies = [Bat(i*100, block_size, 50, 50, "Bat") for i in range (6,7)] +  [Rino(block_size*19, HEIGHT - block_size*4 - 68, 50, 50, "Rino")] + [Chameleon(block_size*23+24,HEIGHT - block_size*3 + 20, 50, 50, "Chameleon")]
-    pet1 = BlueBird(-135, 530, 50, 50, "BlueBird")
-    pet2 = Turtle(block_size*14+8,block_size+45,50,50, "Turtle")
-    items = [Item(100+ i*50,200,50,50,"Apple") for i in range (8,15)] + [Item(150 + i*50, HEIGHT - block_size * 5,50,50,"Bananas") for i in range (7,14)] + [Item(1665 +i*150, HEIGHT - block_size - 64,50,50, "Kiwi") for i in range (0,3)] + [Item(block_size*14+20, block_size*3,50,50,"Kiwi"),
-             Item(block_size*24+16, HEIGHT - block_size*4+48,50,50,"Melon")]
-    obstacles = [Fire(-160, HEIGHT - block_size - 64, 16, 32), Fire(6*block_size +80,HEIGHT - 3*block_size - 64, 16, 32),
-                 Fire(-80, HEIGHT - block_size - 64, 16, 32)] + [Saw(400 + 80*i, HEIGHT - block_size - 72, 38, 38) for i in range (0,8)] + [Fire(1600 + i*150, HEIGHT - block_size - 64, 16, 32) for i in range (0, 4)]
-    wall_1 = [Block(0, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
-    wall_2 = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH//block_size, 3*WIDTH// block_size)]
-    wall_3 = [Block(25*block_size, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
-    wall_4 = [Block(i * block_size, 0, block_size) for i in range(-WIDTH//block_size, 3*WIDTH// block_size)]
-    bricks = [Brick(block_size * 4 + i * 96, HEIGHT - block_size*5 - 30, 96, 18) for i in range(0, 6)  ]
-    objects = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks]  + [Block(block_size * i, HEIGHT - block_size * (i+1), block_size) for i in range (1,4)]  + [Block(-block_size, HEIGHT - 4*block_size, block_size),
-    Block(-2*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 3*block_size, block_size),
-    Block(-3*block_size, HEIGHT - 2*block_size, block_size)] + [Block(block_size*i, HEIGHT - (14-i)*block_size, block_size) for i in range (10,13)] + [Block(block_size*15, block_size, block_size),
-    Block(15*block_size, 2*block_size, block_size)] + [Block(15*block_size, i*block_size, block_size) for i in range(3,5)] + [Block(i*block_size, 4*block_size, block_size) for i in range(16, 23)] + [Block(24*block_size, HEIGHT - 2*block_size, block_size),
-    Block(6*block_size, HEIGHT - 3*block_size, block_size), Block(7*block_size, HEIGHT - 3*block_size, block_size)] + [Block(block_size*13,block_size, block_size), Block(block_size*16,block_size*3, block_size),
-    Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size)]
+    player     = Player(100, 100, 50, 50, "VirtualGuy")
+    npc        = NPC(200 , HEIGHT - block_size*5, 50, 50, "PinkMan")
+    enemies    = [Bat(i*100, block_size, 50, 50, "Bat") for i in range (6,7)] +  [Rino(block_size*19, HEIGHT - block_size*4 - 68, 50, 50, "Rino")] + [Chameleon(block_size*23+24,HEIGHT - block_size*3 + 20, 50, 50, "Chameleon")]
+    pet1       = BlueBird(-135, 530, 50, 50, "BlueBird")
+    pet2       = Turtle(block_size*14+8,block_size+45,50,50, "Turtle")
+    items      = [Item(100+ i*50,200,50,50,"Apple") for i in range (8,15)] + [Item(150 + i*50, HEIGHT - block_size * 5,50,50,"Bananas") for i in range (7,14)] + [Item(1665 +i*150, HEIGHT - block_size - 64,50,50, "Kiwi") for i in range (0,3)] + [Item(block_size*14+20, block_size*3,50,50,"Kiwi"),
+                  Item(block_size*24+16, HEIGHT - block_size*4+48,50,50,"Melon")]
+    obstacles  = [Fire(-160, HEIGHT - block_size - 64, 16, 32), Fire(6*block_size +80,HEIGHT - 3*block_size - 64, 16, 32),
+                  Fire(-80, HEIGHT - block_size - 64, 16, 32)] + [Saw(400 + 80*i, HEIGHT - block_size - 72, 38, 38) for i in range (0,8)] + [Fire(1600 + i*150, HEIGHT - block_size - 64, 16, 32) for i in range (0, 4)]
+    wall_1     = [Block(0, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
+    wall_2     = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH//block_size, 3*WIDTH// block_size)]
+    wall_3     = [Block(25*block_size, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
+    wall_4     = [Block(i * block_size, 0, block_size) for i in range(-WIDTH//block_size, 3*WIDTH// block_size)]
+    bricks     = [Brick(block_size * 4 + i * 96, HEIGHT - block_size*5 - 30, 96, 18) for i in range(0, 6)  ]
+    objects    = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks]  + [Block(block_size * i, HEIGHT - block_size * (i+1), block_size) for i in range (1,4)]  + [Block(-block_size, HEIGHT - 4*block_size, block_size),
+                  Block(-2*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 3*block_size, block_size),
+                  Block(-3*block_size, HEIGHT - 2*block_size, block_size)] + [Block(block_size*i, HEIGHT - (14-i)*block_size, block_size) for i in range (10,13)] + [Block(block_size*15, block_size, block_size),
+                  Block(15*block_size, 2*block_size, block_size)] + [Block(15*block_size, i*block_size, block_size) for i in range(3,5)] + [Block(i*block_size, 4*block_size, block_size) for i in range(16, 23)] + [Block(24*block_size, HEIGHT - 2*block_size, block_size),
+                  Block(6*block_size, HEIGHT - 3*block_size, block_size), Block(7*block_size, HEIGHT - 3*block_size, block_size)] + [Block(block_size*13,block_size, block_size), Block(block_size*16,block_size*3, block_size),
+                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size)]
 
 
     offset_x = 0
@@ -226,11 +226,11 @@ def main(window):
             if offset_x < 2300:
                 offset_x += 100
         
-        for enemy in enemies: enemy.loop(FPS)
         player.loop(FPS)
         npc.loop(FPS)
         pet1.loop(FPS)
         pet2.loop(FPS)
+        for enemy in enemies: enemy.loop(FPS)
         for obs in obstacles: obs.loop()
         for item in items: item.loop(FPS)
         
@@ -252,8 +252,6 @@ def main(window):
                 pet2.disappear()     
 
                 
-
-       
         draw(window, background, player, npc, enemies, pet1, pet2, items, objects, offset_x, background_scroll_x, condition_bar)
 
         while player.hit_count == 4:
