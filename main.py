@@ -303,6 +303,11 @@ while isStart:
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 714b7c2cb450325a238ad75cc2c9605755b52051
 
 
 
