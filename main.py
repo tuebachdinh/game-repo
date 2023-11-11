@@ -14,7 +14,7 @@ FPS = 60
 PLAYER_VEL = 5
 music = pygame.mixer.music.load(join("sound","music.mp3"))
 pygame.mixer.music.set_volume(0.1)
-#pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tue_PyGame")
 isStart = True
@@ -227,7 +227,7 @@ def main(window):
                 pet1.disappear()     
 
         
-        if (player.items >= 10 and not pet2.hit) or (pet2.hit and pet2.hit_animation < FPS):
+        if (player.items >= 14 and not pet2.hit) or (pet2.hit and pet2.hit_animation < FPS):
                 pet2.rect.x = player.rect.x - 84 
                 pet2.rect.y = player.rect.y + 16
         elif pet2.hit and pet2.hit_animation > FPS: 
@@ -238,7 +238,7 @@ def main(window):
        
         draw(window, background, player, npc, enemies, pet1, pet2, items, objects, offset_x, background_scroll_x, condition_bar)
 
-        while player.hit_count == -1:
+        while player.hit_count == 4:
             game_over = pygame.transform.scale((pygame.image.load(join("state","game_over.png"))), (570, 490))
             quit_image = pygame.transform.scale(pygame.image.load(join("state","quit.png")), (120, 60))
             restart_image = pygame.transform.scale(pygame.image.load(join("state","restart.png")), (180, 60))
@@ -263,7 +263,28 @@ def main(window):
         
 
 # Menu at the beginning of the game
-main(window)
+while isStart:
+    start = pygame.transform.scale(pygame.image.load(join("state","start.png")), (240,80))
+    start_rect = start.get_rect(center = (600,425))
+    background_start = pygame.transform.scale(pygame.image.load(join("state","background_start.jpeg")), (1200,750))
+    window.blit(background_start, (0,0))
+    window.blit(start, (start_rect.x, start_rect.y))
+    text1 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 20).render("DIRECTED BY TUE DINH (TOBY)", True, "Black")
+    text2 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 20).render("NOVEMBER 2023", True, "Black")
+            
+    window.blit(text1, (10,10))
+    window.blit(text2, (30,30))
+    pygame.display.update()
+
+    key = pygame.key.get_pressed()
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                main(window)
+                isStart = False
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
 
 
 
