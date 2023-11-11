@@ -79,12 +79,19 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
     teleport_sound = pygame.mixer.Sound(join("sound","teleport.mp3"))
     keys = pygame.key.get_pressed()
     pet1.x_vel = 0
-    player.x_vel = 0
     pet2.x_vel = 0
+    player.x_vel = 0
+    npc.x_vel = 0 
 
     player_collided1, player_received1, pet1_collided1, pet2_collided1 = handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
     player_collided2, player_received2, pet1_collided2, pet2_collided2 = handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, PLAYER_VEL*3)
 
+    if npc.rect.x > 2500 and keys[pygame.K_a]:
+            npc.move_left(PLAYER_VEL)
+   
+    if npc.rect.x > 2500 and keys[pygame.K_d]:
+            npc.move_right(PLAYER_VEL)
+    
     if keys[pygame.K_LEFT] and len(player_collided1) == 0:
             player.move_left(PLAYER_VEL)
             pet1.move_left(PLAYER_VEL)
@@ -123,10 +130,13 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
                 hit_sound.play()
             enemy.hit = True
 
-    if pygame.sprite.collide_mask(player, npc):
+    if pygame.sprite.collide_mask(player, npc) and player.rect.x < 2500:
         player.make_teleport()
         npc.make_teleport()
         teleport_sound.play()
+    
+    
+
 
 
 
@@ -155,7 +165,7 @@ def main(window):
     background = get_background("Blue.png")
     block_size = 96
     player = Player(100, 100, 50, 50, "VirtualGuy")
-    npc = NPC(16*block_size+24 , HEIGHT - block_size*5, 50, 50, "PinkMan")
+    npc = NPC(200 , HEIGHT - block_size*5, 50, 50, "PinkMan")
     enemies = [Bat(i*100, block_size, 50, 50, "Bat") for i in range (6,7)] +  [Rino(block_size*19, HEIGHT - block_size*4 - 68, 50, 50, "Rino")] + [Chameleon(block_size*23+24,HEIGHT - block_size*3 + 20, 50, 50, "Chameleon")]
     pet1 = BlueBird(-135, 530, 50, 50, "BlueBird")
     pet2 = Turtle(block_size*14+8,block_size+45,50,50, "Turtle")
@@ -195,6 +205,8 @@ def main(window):
             if event.type == pygame.KEYDOWN:
                 if (event.key == pygame.K_SPACE or event.key == pygame.K_UP)and player.jump_count < 2:
                     player.jump()
+                if event.key == pygame.K_w and npc.jump_count < 2 and npc.rect.x > 2500:
+                    npc.jump()
                    
         
         background_scroll_x -= background_scroll_speed
@@ -204,7 +216,13 @@ def main(window):
         if ((player.rect.right - offset_x >= WIDTH - scroll_area_width) and player.x_vel > 0) or (
                 (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
             offset_x += player.x_vel
-        if player.rect.x == 2500:
+        
+        if npc.rect.x > 2500:
+            if ((npc.rect.right - offset_x >= WIDTH - scroll_area_width) and npc.x_vel > 0) or (
+                    (npc.rect.left - offset_x <= scroll_area_width) and npc.x_vel < 0):
+                offset_x += npc.x_vel
+        
+        if player.rect.x == 2700:
             if offset_x < 2300:
                 offset_x += 100
         

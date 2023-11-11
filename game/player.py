@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         if self.teleport_aniamtion >= fps/4:
             self.teleport = False
             self.teleport_aniamtion = 0
-            self.rect.x = 2500
+            self.rect.x = 2700
             
 
         if self.hit_animation >= fps/2:
@@ -131,7 +131,7 @@ class NPC(Player):
         if self.teleport_aniamtion >= fps:
             self.teleport = False
             self.teleport_aniamtion = 0
-            self.rect.x = 2600
+            self.rect.x = 2900
             
         if self.hit_animation >= fps/2:
             self.hit = False
