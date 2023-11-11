@@ -261,30 +261,9 @@ def main(window):
                         pygame.quit()
                         quit()
         
-main(window)
+
 # Menu at the beginning of the game
-"""while isStart:
-    start = pygame.transform.scale(pygame.image.load(join("state","start.png")), (240,80))
-    start_rect = start.get_rect(center = (600,425))
-    background_start = pygame.transform.scale(pygame.image.load(join("state","background_start.jpeg")), (1200,750))
-    window.blit(background_start, (0,0))
-    window.blit(start, (start_rect.x, start_rect.y))
-    text1 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 20).render("DIRECTED BY TUE DINH (TOBY)", True, "Black")
-    text2 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 20).render("NOVEMBER 2023", True, "Black")
-            
-    window.blit(text1, (10,10))
-    window.blit(text2, (30,30))
-    pygame.display.update()
-
-
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if start_rect.collidepoint(event.pos):
-                main(window)
-                isStart = False
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()"""
+main(window)
 
 
 
