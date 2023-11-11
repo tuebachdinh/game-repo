@@ -7,7 +7,7 @@ Welcome to "BlueVenture" ! This Python game, powered by the Pygame library, take
 Your mission: guide the player to the your lover's destination while avoiding enemies and obstacles 🪨, all while preserving your three hearts. Meet PinkAce, teleport to a new state, and face fresh challenges!🚀🤖
 
 **Demo**
-![Gameplay Video](https://www.youtube.com/watch?v=gqSG5FgoR6Q)
+[![Gameplay Video](https://img.youtube.com/vi/gqSG5FgoR6Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=gqSG5FgoR6Q)
 
 **Features**
 
