@@ -27,9 +27,9 @@ If you'd like to contribute to the development of this game, feel free to fork t
 
 **Credits**
 
-Pygame: The game is built using the Pygame library.
-Player, Enemy, and Pet Artwork by PixelFrog Assets.
-Game Developed by Tue Dinh (Toby).
+- Pygame: The game is built using the Pygame library.
+- Player, Enemy, and Pet Artwork by PixelFrog Assets.
+- Game Developed by Tue Dinh (Toby).
 
 **License**
 
