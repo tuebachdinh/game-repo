@@ -87,7 +87,7 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
     player_collided1, player_received1, pet1_collided1, pet2_collided1 = handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
     player_collided2, player_received2, pet1_collided2, pet2_collided2 = handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, PLAYER_VEL*3)
     npc_collided1, npc_received1, pet1_collided1, pet2_collided1 = handle_horizontal_collide(npc, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
-    npc_collided2, npc_received2, pet1_collided1, pet2_collided1 = handle_horizontal_collide(npc, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
+    npc_collided2, npc_received2, pet1_collided2, pet2_collided2 = handle_horizontal_collide(npc, objects, enemies, pet1, pet2, items, PLAYER_VEL*3)
     
     if npc.on_next_round() == True and keys[pygame.K_a] and len(npc_collided1) ==0:
             npc.move_left(PLAYER_VEL)
@@ -184,16 +184,16 @@ def main(window):
     obstacles  = [Fire(-160, HEIGHT - block_size - 64, 16, 32), Fire(6*block_size +80,HEIGHT - 3*block_size - 64, 16, 32),
                   Fire(-80, HEIGHT - block_size - 64, 16, 32)] + [Saw(400 + 80*i, HEIGHT - block_size - 72, 38, 38) for i in range (0,8)] + [Fire(1600 + i*150, HEIGHT - block_size - 64, 16, 32) for i in range (0, 4)]
     wall_1     = [Block(0, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
-    wall_2     = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH//block_size, 3*WIDTH// block_size)]
+    wall_2     = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH//block_size, 6*WIDTH// block_size)]
     wall_3     = [Block(25*block_size, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
-    wall_4     = [Block(i * block_size, 0, block_size) for i in range(-WIDTH//block_size, 3*WIDTH// block_size)]
+    wall_4     = [Block(i * block_size, 0, block_size) for i in range(-WIDTH//block_size, 6*WIDTH// block_size)]
     bricks     = [Brick(block_size * 4 + i * 96, HEIGHT - block_size*5 - 30, 96, 18) for i in range(0, 6)  ]
     objects    = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks]  + [Block(block_size * i, HEIGHT - block_size * (i+1), block_size) for i in range (1,4)]  + [Block(-block_size, HEIGHT - 4*block_size, block_size),
                   Block(-2*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 3*block_size, block_size),
                   Block(-3*block_size, HEIGHT - 2*block_size, block_size)] + [Block(block_size*i, HEIGHT - (14-i)*block_size, block_size) for i in range (10,13)] + [Block(block_size*15, block_size, block_size),
                   Block(15*block_size, 2*block_size, block_size)] + [Block(15*block_size, i*block_size, block_size) for i in range(3,5)] + [Block(i*block_size, 4*block_size, block_size) for i in range(16, 23)] + [Block(24*block_size, HEIGHT - 2*block_size, block_size),
                   Block(6*block_size, HEIGHT - 3*block_size, block_size), Block(7*block_size, HEIGHT - 3*block_size, block_size)] + [Block(block_size*13,block_size, block_size), Block(block_size*16,block_size*3, block_size),
-                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size),Block(block_size*30,HEIGHT-block_size*2,block_size)]
+                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size)]+[Block(block_size*(28+i),HEIGHT-block_size*i,block_size) for i in range (2,6)]
 
 
     offset_x = 0
