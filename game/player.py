@@ -118,7 +118,10 @@ class Player(pygame.sprite.Sprite):
 class NPC(Player):
     def __init__(self, x, y, width, height, name):
         super().__init__(x, y, width, height, name)
-    
+
+    def on_next_round(self):
+        return self.rect.x > 2400
+
     def loop(self, fps):
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         self.move(self.x_vel, self.y_vel)

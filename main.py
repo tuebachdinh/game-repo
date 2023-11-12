@@ -14,7 +14,7 @@ FPS = 60
 PLAYER_VEL = 5
 music = pygame.mixer.music.load(join("sound","music.mp3"))
 pygame.mixer.music.set_volume(0.1)
-pygame.mixer.music.play(-1)
+#pygame.mixer.music.play(-1)
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tue_PyGame")
 isStart = True
@@ -83,14 +83,16 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
     pet2.x_vel = 0
     player.x_vel = 0
     npc.x_vel = 0 
-
+    
     player_collided1, player_received1, pet1_collided1, pet2_collided1 = handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
     player_collided2, player_received2, pet1_collided2, pet2_collided2 = handle_horizontal_collide(player, objects, enemies, pet1, pet2, items, PLAYER_VEL*3)
-
-    if npc.rect.x > 2500 and keys[pygame.K_a]:
+    npc_collided1, npc_received1, pet1_collided1, pet2_collided1 = handle_horizontal_collide(npc, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
+    npc_collided2, npc_received2, pet1_collided1, pet2_collided1 = handle_horizontal_collide(npc, objects, enemies, pet1, pet2, items, -PLAYER_VEL*3)
+    
+    if npc.on_next_round() == True and keys[pygame.K_a] and len(npc_collided1) ==0:
             npc.move_left(PLAYER_VEL)
    
-    if npc.rect.x > 2500 and keys[pygame.K_d]:
+    if npc.on_next_round() == True and keys[pygame.K_d] and len(npc_collided2) ==0:
             npc.move_right(PLAYER_VEL)
     
     if keys[pygame.K_LEFT] and len(player_collided1) == 0:
@@ -103,15 +105,23 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
             pet2.move_right(PLAYER_VEL)
 
     player_collided_vertically = handle_vertical_collision(player, objects, enemies, player.y_vel)
+    npc_collided_vertically = handle_vertical_collision(npc, objects, enemies, npc.y_vel)
+    to_check_npc = [*npc_collided1,*npc_collided2,*npc_collided_vertically]
     to_check_player = [*player_collided1, *player_collided1, *player_collided_vertically]
     to_check_pet1 = [*pet1_collided1, *pet1_collided2]
     to_check_pet2 = [*pet2_collided1, *pet2_collided2]
-    to_check_item = [*player_received2, *player_received1]
+    to_check_item = [*player_received2, *player_received1, *npc_received1, *npc_received2]
 
+    for obj in to_check_npc:
+        if obj.name == "fire" or obj.name == "saw" or obj.name == "Bat" or obj.name == "Rino" or obj.name == "Chamelon":
+            npc.make_hit()
+            hit_sound.play()
+   
     for obj in to_check_player:
         if obj.name == "fire" or obj.name == "saw" or obj.name == "Bat" or obj.name == "Rino" or obj.name == "Chamelon":
             player.make_hit()
             hit_sound.play()
+    
     for item in to_check_item: 
         if item.name == "Apple" or item.name == "Bananas" or item.name == "Kiwi" or item.name == "Melon":
             item.disappear()
@@ -131,7 +141,7 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
                 hit_sound.play()
             enemy.hit = True
 
-    if pygame.sprite.collide_mask(player, npc) and player.rect.x < 2500:
+    if pygame.sprite.collide_mask(player, npc) and player.rect.x < 2400:
         player.make_teleport()
         npc.make_teleport()
         teleport_sound.play()
@@ -183,7 +193,7 @@ def main(window):
                   Block(-3*block_size, HEIGHT - 2*block_size, block_size)] + [Block(block_size*i, HEIGHT - (14-i)*block_size, block_size) for i in range (10,13)] + [Block(block_size*15, block_size, block_size),
                   Block(15*block_size, 2*block_size, block_size)] + [Block(15*block_size, i*block_size, block_size) for i in range(3,5)] + [Block(i*block_size, 4*block_size, block_size) for i in range(16, 23)] + [Block(24*block_size, HEIGHT - 2*block_size, block_size),
                   Block(6*block_size, HEIGHT - 3*block_size, block_size), Block(7*block_size, HEIGHT - 3*block_size, block_size)] + [Block(block_size*13,block_size, block_size), Block(block_size*16,block_size*3, block_size),
-                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size)]
+                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size),Block(block_size*30,HEIGHT-block_size*2,block_size)]
 
 
     offset_x = 0
@@ -205,7 +215,7 @@ def main(window):
             if event.type == pygame.KEYDOWN:
                 if (event.key == pygame.K_SPACE or event.key == pygame.K_UP)and player.jump_count < 2:
                     player.jump()
-                if event.key == pygame.K_w and npc.jump_count < 2 and npc.rect.x > 2500:
+                if event.key == pygame.K_w and npc.jump_count < 2 and npc.on_next_round():
                     npc.jump()
                    
         
@@ -217,7 +227,7 @@ def main(window):
                 (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
             offset_x += player.x_vel
         
-        if npc.rect.x > 2500:
+        if npc.on_next_round():
             if ((npc.rect.right - offset_x >= WIDTH - scroll_area_width) and npc.x_vel > 0) or (
                     (npc.rect.left - offset_x <= scroll_area_width) and npc.x_vel < 0):
                 offset_x += npc.x_vel
@@ -235,8 +245,6 @@ def main(window):
         for item in items: item.loop(FPS)
         
         handle_move(player, npc, objects, enemies, pet1, pet2, items)
-        
-        handle_vertical_collision(npc, objects, enemies, npc.y_vel)
         
         if (player.items >= 8 and not pet1.hit) or (pet1.hit and pet1.hit_animation < FPS):
                 pet1.rect.x = player.rect.x + 45 
