@@ -54,28 +54,29 @@ def get_block_or_brick(size1, size2, pos1, pos2):
     surface.blit(image, (0, 0), rect)
     return pygame.transform.scale2x(surface)
 
-def get_condition_bar(player):
-    condition_bar = pygame.transform.scale(pygame.image.load(join("state","condition_bar.png")), (320, 150))
+def get_condition_bar(player, name):
+    condition_bar = pygame.transform.scale(pygame.image.load(join("state",name + "_condition_bar.png")), (320, 150))
     full_heart = pygame.transform.scale(pygame.image.load(join("state","full_heart.png")), (45, 45))
-
+    table_x = {"player": 120, "npc":48}
+    table_y = {"player": 0, "npc": 8}
     if player.hit_count == 0:
         lives = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 40).render("LIVES 3", True, "WHITE")
-        condition_bar.blit(full_heart, (120, 50))
-        condition_bar.blit(full_heart, (170, 50))
-        condition_bar.blit(full_heart, (220, 50))
-        condition_bar.blit(lives,(130, 100))
+        condition_bar.blit(full_heart, (table_x[name], 50 + table_y[name]))
+        condition_bar.blit(full_heart, (table_x[name] + 50, 50 + table_y[name]))
+        condition_bar.blit(full_heart, (table_x[name] + 100, 50 + table_y[name]))
+        condition_bar.blit(lives,(table_x[name]+20, 100 + table_y[name]))
     elif player.hit_count == 1:
         lives = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 40).render("LIVES 2", True, "WHITE")
-        condition_bar.blit(full_heart, (120, 50))
-        condition_bar.blit(full_heart, (170, 50))
-        condition_bar.blit(lives,(130, 100))
+        condition_bar.blit(full_heart, (table_x[name], 50 + table_y[name]))
+        condition_bar.blit(full_heart, (table_x[name] + 50, 50 + table_y[name]))
+        condition_bar.blit(lives,(table_x[name]+20, 100 + table_y[name]))
     elif player.hit_count == 2:
         lives = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 40).render("LIVES 1", True, "WHITE")
-        condition_bar.blit(full_heart, (120, 50))
-        condition_bar.blit(lives,(130, 100))
+        condition_bar.blit(full_heart, (table_x[name], 50 + table_y[name]))
+        condition_bar.blit(lives,(table_x[name]+20, 100 + table_y[name]))
     elif player.hit_count == 3:
         lives = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 40).render("LIVES 0", True, "WHITE")
-        condition_bar.blit(lives,(130, 100))
+        condition_bar.blit(lives,(table_x[name]+20, 100 + table_y[name]))
     
     return condition_bar
 

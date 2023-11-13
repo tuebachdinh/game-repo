@@ -156,7 +156,8 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
 
 
 # Draw everything on the screen
-def draw(window, background, player, npc, enemies, pet1, pet2, items, objects, offset_x, background_scroll_x, condition_bar):
+def draw(window, background, player, npc, enemies, pet1, pet2, 
+         items, objects, offset_x, background_scroll_x, condition_bar_player, condition_bar_npc):
     
     window.blit(background, (background_scroll_x, 0))
     window.blit(background, (background_scroll_x + background.get_width(), 0))
@@ -173,7 +174,8 @@ def draw(window, background, player, npc, enemies, pet1, pet2, items, objects, o
     pet1.draw(window, offset_x)
     pet2.draw(window, offset_x)
  
-    window.blit(condition_bar, (-16, HEIGHT - condition_bar.get_height() + 20 ))
+    window.blit(condition_bar_player, (-16, HEIGHT - condition_bar_player.get_height() + 20 ))
+    window.blit(condition_bar_npc, (WIDTH - condition_bar_npc.get_width() +16, HEIGHT - condition_bar_npc.get_height() +16))
     
     pygame.display.update()
 
@@ -218,7 +220,8 @@ def main(window):
     run = True
     while run:
 
-        condition_bar = get_condition_bar(player)
+        player_condition_bar = get_condition_bar(player, "player")
+        npc_condition_bar = get_condition_bar(npc, "npc")
         clock.tick(FPS)
             
         for event in pygame.event.get():
@@ -280,9 +283,10 @@ def main(window):
                 pet2.disappear()     
 
                 
-        draw(window, background, player, npc, enemies, pet1, pet2, items, objects, offset_x, background_scroll_x, condition_bar)
+        draw(window, background, player, npc, enemies, pet1, pet2, items, objects, 
+             offset_x, background_scroll_x, player_condition_bar, npc_condition_bar)
 
-        while player.hit_count == 4:
+        while player.hit_count == 4 or npc.hit_count == 4:
             game_over = pygame.transform.scale((pygame.image.load(join("state","game_over.png"))), (570, 490))
             quit_image = pygame.transform.scale(pygame.image.load(join("state","quit.png")), (120, 60))
             restart_image = pygame.transform.scale(pygame.image.load(join("state","restart.png")), (180, 60))
