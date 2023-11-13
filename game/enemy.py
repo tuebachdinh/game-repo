@@ -115,6 +115,8 @@ class BlueBird(Enemy):
         super().__init__(x, y, width, height, name)
         self.SPRITES = get_sprite_sheets("Enemies", name, 32, 32, True)
         self.direction = "left"
+        self.x_vel = 0
+        self.y_vel = 0
 
     def update_sprite_sheet(self):
         if self.hit:
@@ -140,11 +142,13 @@ class BlueBird(Enemy):
         self.hit = True
 
     def move_left(self, vel):
+        self.x_vel = -vel
         if self.direction != "right":
             self.direction = "right"
             self.animation_count = 0
 
     def move_right(self, vel):
+        self.x_vel = vel
         if self.direction != "left":
             self.direction = "left"
             self.animation_count = 0
@@ -174,5 +178,53 @@ class Turtle(BlueBird):
             self.animation_count = 0
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)
+
+class Bunny(BlueBird):
+    def __init__(self, x, y, width, height, name):
+        super().__init__(x, y, width, height, name)
+        self.SPRITES = get_sprite_sheets("Enemies", name, 34, 44, True)
+        self.direction = "left"
+    
+    def update_sprite_sheet(self):
+        sprite_sheet_name = "Idle (34x44)_" + self.direction
+        if self.hit:
+            sprite_sheet_name = "Hit (34x44)_" + self.direction
+        elif self.x_vel != 0:
+            sprite_sheet_name = "Run (34x44)_" + self.direction
+       
+        sprites = self.SPRITES[sprite_sheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.sprite = sprites[sprite_index]
+        pygame.transform.scale(self.sprite, (48, 48))
+        self.animation_count += 1
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.sprite)
+
+class Radish(BlueBird):
+    def __init__(self, x, y, width, height, name):
+        super().__init__(x, y, width, height, name)
+        self.SPRITES = get_sprite_sheets("Enemies", name, 30, 38, True)
+        self.direction = "left"
+    
+    def update_sprite_sheet(self):
+        sprite_sheet_name = "Idle 1 (30x38)_" + self.direction
+        if self.hit:
+            sprite_sheet_name = "Hit (30x38)_" + self.direction
+        elif self.x_vel != 0:
+            sprite_sheet_name = "Run (30x38)_" + self.direction
+       
+        sprites = self.SPRITES[sprite_sheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.sprite = sprites[sprite_index]
+        pygame.transform.scale(self.sprite, (48, 48))
+        self.animation_count += 1
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.sprite)
+
+
 
     
