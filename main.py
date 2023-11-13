@@ -110,7 +110,8 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
     to_check_player = [*player_collided1, *player_collided1, *player_collided_vertically]
     to_check_pet1 = [*pet1_collided1, *pet1_collided2]
     to_check_pet2 = [*pet2_collided1, *pet2_collided2]
-    to_check_item = [*player_received2, *player_received1, *npc_received1, *npc_received2]
+    to_check_item_player = [*player_received2, *player_received1]
+    to_check_item_npc = [*npc_received1, *npc_received2]
 
     for obj in to_check_npc:
         if obj.name == "fire" or obj.name == "saw" or obj.name == "Bat" or obj.name == "Rino" or obj.name == "Chamelon":
@@ -122,11 +123,17 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
             player.make_hit()
             hit_sound.play()
     
-    for item in to_check_item: 
+    for item in to_check_item_player: 
         if item.name == "Apple" or item.name == "Bananas" or item.name == "Kiwi" or item.name == "Melon":
             item.disappear()
             collect_sound.play()
             player.items += 1
+    
+    for item in to_check_item_npc: 
+        if item.name == "Apple" or item.name == "Bananas" or item.name == "Kiwi" or item.name == "Melon":
+            item.disappear()
+            collect_sound.play()
+            npc.items += 1
     
     for enemy in to_check_pet1:
         if enemy.name == "Bat" or enemy.name == "Rino" or enemy.name == "Chameleon":
@@ -137,7 +144,7 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, items):
     for enemy in to_check_pet2:
         if enemy.name == "Bat" or enemy.name == "Rino" or enemy.name == "Chameleon":
             pet2.make_hit()
-            if pet1.hit_animation == 1:
+            if pet1.hit_animation == 1: 
                 hit_sound.play()
             enemy.hit = True
 
@@ -176,24 +183,31 @@ def main(window):
     block_size = 96
     player     = Player(100, 100, 50, 50, "VirtualGuy")
     npc        = NPC(200 , HEIGHT - block_size*5, 50, 50, "PinkMan")
-    enemies    = [Bat(i*100, block_size, 50, 50, "Bat") for i in range (6,7)] +  [Rino(block_size*19, HEIGHT - block_size*4 - 68, 50, 50, "Rino")] + [Chameleon(block_size*23+24,HEIGHT - block_size*3 + 20, 50, 50, "Chameleon")]
-    pet1       = BlueBird(-135, 530, 50, 50, "BlueBird")
-    pet2       = Turtle(block_size*14+8,block_size+45,50,50, "Turtle")
+    enemies    = [Bat(i*100, block_size, 50, 50, "Bat") for i in range (6,7)] +  [Rino(block_size*19, HEIGHT - block_size*4 - 68, 50, 50, "Rino")] + [Chameleon(block_size*23+24,HEIGHT - block_size*3 + 20, 50, 50, "Chameleon"),
+                  Rino(block_size*35, HEIGHT - block_size*5-68,50,50,"Rino")]
+    pet1       =  BlueBird(-135, 530, 50, 50, "BlueBird")
+    pet2       =  Turtle(block_size*14+8,block_size+45,50,50, "Turtle")
     items      = [Item(100+ i*50,200,50,50,"Apple") for i in range (8,15)] + [Item(150 + i*50, HEIGHT - block_size * 5,50,50,"Bananas") for i in range (7,14)] + [Item(1665 +i*150, HEIGHT - block_size - 64,50,50, "Kiwi") for i in range (0,3)] + [Item(block_size*14+20, block_size*3,50,50,"Kiwi"),
-                  Item(block_size*24+16, HEIGHT - block_size*4+48,50,50,"Melon")]
+                  Item(block_size*24+16, HEIGHT - block_size*4+56,50,50,"Melon"),Item(block_size*30, HEIGHT - block_size*3,50,50,"Bananas")] + [Item(block_size*39+32+100*i, HEIGHT - block_size*5 -64,50,50,"Apple") for i in range(-3, 3)]
     obstacles  = [Fire(-160, HEIGHT - block_size - 64, 16, 32), Fire(6*block_size +80,HEIGHT - 3*block_size - 64, 16, 32),
                   Fire(-80, HEIGHT - block_size - 64, 16, 32)] + [Saw(400 + 80*i, HEIGHT - block_size - 72, 38, 38) for i in range (0,8)] + [Fire(1600 + i*150, HEIGHT - block_size - 64, 16, 32) for i in range (0, 4)]
     wall_1     = [Block(0, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
     wall_2     = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH//block_size, 6*WIDTH// block_size)]
-    wall_3     = [Block(25*block_size, i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
+    wall_3     = [Block(25*block_size,   i * block_size, block_size) for i in range(0, HEIGHT//block_size)]
     wall_4     = [Block(i * block_size, 0, block_size) for i in range(-WIDTH//block_size, 6*WIDTH// block_size)]
     bricks     = [Brick(block_size * 4 + i * 96, HEIGHT - block_size*5 - 30, 96, 18) for i in range(0, 6)  ]
-    objects    = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks]  + [Block(block_size * i, HEIGHT - block_size * (i+1), block_size) for i in range (1,4)]  + [Block(-block_size, HEIGHT - 4*block_size, block_size),
+    
+    obj_round1 = [Block(block_size * i, HEIGHT - block_size * (i+1), block_size) for i in range (1,4)]  + [Block(-block_size, HEIGHT - 4*block_size, block_size),
                   Block(-2*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 4*block_size, block_size), Block(-3*block_size, HEIGHT - 3*block_size, block_size),
                   Block(-3*block_size, HEIGHT - 2*block_size, block_size)] + [Block(block_size*i, HEIGHT - (14-i)*block_size, block_size) for i in range (10,13)] + [Block(block_size*15, block_size, block_size),
                   Block(15*block_size, 2*block_size, block_size)] + [Block(15*block_size, i*block_size, block_size) for i in range(3,5)] + [Block(i*block_size, 4*block_size, block_size) for i in range(16, 23)] + [Block(24*block_size, HEIGHT - 2*block_size, block_size),
                   Block(6*block_size, HEIGHT - 3*block_size, block_size), Block(7*block_size, HEIGHT - 3*block_size, block_size)] + [Block(block_size*13,block_size, block_size), Block(block_size*16,block_size*3, block_size),
-                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size)]+[Block(block_size*(28+i),HEIGHT-block_size*i,block_size) for i in range (2,6)]
+                  Block(block_size*13,block_size*2, block_size),Block(block_size*14,block_size*2, block_size)]
+    
+    obj_round2 = [Block(block_size*(28+i),HEIGHT-block_size*i,block_size) for i in range (2,6)] + [Block(block_size*(34+i), HEIGHT - block_size*5, block_size) for i in range (0,10)]
+    
+    
+    objects    = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks, *obj_round1, *obj_round2]
 
 
     offset_x = 0
@@ -232,7 +246,7 @@ def main(window):
                     (npc.rect.left - offset_x <= scroll_area_width) and npc.x_vel < 0):
                 offset_x += npc.x_vel
         
-        if player.rect.x == 2700:
+        if player.rect.x  == 2700:
             if offset_x < 2300:
                 offset_x += 100
         
@@ -246,9 +260,15 @@ def main(window):
         
         handle_move(player, npc, objects, enemies, pet1, pet2, items)
         
-        if (player.items >= 8 and not pet1.hit) or (pet1.hit and pet1.hit_animation < FPS):
+        if (player.items >= 6 and not pet1.hit) or (pet1.hit and pet1.hit_animation < FPS):
                 pet1.rect.x = player.rect.x + 45 
                 pet1.rect.y = player.rect.y - 42 
+        elif pet1.hit and pet1.hit_animation > FPS: 
+                pet1.disappear()   
+
+        if (npc.items >= 6 and not pet1.hit) or (pet1.hit and pet1.hit_animation < FPS):
+                pet1.rect.x = npc.rect.x + 45 
+                pet1.rect.y = npc.rect.y - 42 
         elif pet1.hit and pet1.hit_animation > FPS: 
                 pet1.disappear()     
 
