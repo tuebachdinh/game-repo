@@ -101,10 +101,6 @@ class Spikes(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
-
-
-
-
 class Item(pygame.sprite.Sprite):
     ANIMATION_DELAY = 2
     def __init__(self, x, y, width, height, name):
@@ -140,3 +136,11 @@ class Item(pygame.sprite.Sprite):
     
     def draw(self, window, offset_x):
         window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
+
+class Checkpoint(Item):
+    ANIMATION_DELAY = 2
+    def __init__(self, x, y, width, height, name):
+        super().__init__(x, y, width, height, name)
+        self.SPRITES = get_sprite_sheets("Items", "Checkpoints", 32, 32, False)
+        
+

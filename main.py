@@ -4,7 +4,7 @@ from os.path import isfile, join
 from game.player import Player, NPC
 from game.enemy import Bat, BlueBird, Rino, Chameleon, Turtle, Bunny, Radish, FatBird, Ghost
 from game.load_images import get_background, get_condition_bar
-from game.object import Block, Brick, Item, Fire, Saw, Block2, Spikes
+from game.object import Block, Brick, Item, Fire, Saw, Block2, Spikes, Checkpoint
 
 pygame.init()
 
@@ -263,7 +263,7 @@ def main(window):
     pet3       =  Bunny(-115,300,50,50,"Bunny")
     pet4       =  Radish(-180,310,50,50,"Radish")
     items      = [Item(100+ i*50,200,50,50,"Apple") for i in range (8,15)] + [Item(150 + i*50, HEIGHT - block_size * 5,50,50,"Bananas") for i in range (7,14)] + [Item(1665 +i*150, HEIGHT - block_size - 64,50,50, "Kiwi") for i in range (0,3)] + [Item(block_size*14+20, block_size*3,50,50,"Kiwi"),
-                  Item(block_size*24+16, HEIGHT - block_size*4+56,50,50,"Melon"),Item(block_size*30, HEIGHT - block_size*3,50,50,"Bananas")] + [Item(block_size*39+32+100*i, HEIGHT - block_size*5 -64,50,50,"Apple") for i in range(-3, 10)] + [Item(block_size*67 + 50*i, HEIGHT - block_size*2 - 64,50,50,"Pineapple") for i in range (0,5)]
+                  Item(block_size*24+16, HEIGHT - block_size*4+56,50,50,"Melon"),Item(block_size*30, HEIGHT - block_size*3,50,50,"Bananas")] + [Item(block_size*39+32+100*i, HEIGHT - block_size*5 -64,50,50,"Apple") for i in range(-3, 10)] + [Item(block_size*67 + 50*i, HEIGHT - block_size*2 - 64,50,50,"Pineapple") for i in range (0,5)] + [Checkpoint(100,200,38,38,"Checkpoint (No Flag)")]
     obstacles  = [Fire(-160, HEIGHT - block_size - 64, 16, 32), Fire(6*block_size +80,HEIGHT - 3*block_size - 64, 16, 32), Spikes(block_size*67,HEIGHT - block_size *2+64,16,16),
                   Fire(-80, HEIGHT - block_size - 64, 16, 32)] + [Saw(400 + 80*i, HEIGHT - block_size - 72, 38, 38) for i in range (0,8)] + [Fire(1600 + i*150, HEIGHT - block_size - 64, 16, 32) for i in range (0, 4)] + [Spikes(block_size*67+16,HEIGHT - block_size *2+64,16,16),
                   Spikes(block_size*67 +32,HEIGHT - block_size *2+64,16,16)] + [Spikes(block_size*67+16*i, HEIGHT - block_size*2+64,16,16) for i in range(3,17)] + [Saw(block_size*68, 320,38,38)]
