@@ -22,6 +22,12 @@ class Block(Object):
         block = get_block_or_brick(size, size, 0, 0)
         self.image.blit(block, (0, 0))
         self.mask = pygame.mask.from_surface(self.image)
+class Block2(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = get_block_or_brick(size,size,96,128)
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
 
 class Brick(Object):
     def __init__(self, x, y, width, height):
@@ -34,8 +40,8 @@ class Fire(Object):
     
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "fire")
-        self.fire = get_sprite_sheets("Traps", "Fire", width, height)
-        self.image = self.fire["off"][0]
+        self.sprites = get_sprite_sheets("Traps", "Fire", width, height)
+        self.image = self.sprites["off"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.animation_count = 0
         self.animation_name = "on"
@@ -47,7 +53,7 @@ class Fire(Object):
         self.animation_name = "off"
 
     def loop(self):
-        sprites = self.fire[self.animation_name]
+        sprites = self.sprites[self.animation_name]
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.image = sprites[sprite_index]
         self.animation_count += 1
@@ -60,20 +66,13 @@ class Fire(Object):
 class Saw(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "saw")
-        self.saw = get_sprite_sheets("Traps", "Saw", width, height)
-        self.image = self.saw["on"][0]
+        self.sprites = get_sprite_sheets("Traps", "Saw", width, height)
+        self.image = self.sprites["on"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.animation_count = 0
         self.animation_name = "on"
-
-    def on(self):
-        self.animation_name = "on"
-
-    def off(self):
-        self.animation_name = "off"
-
     def loop(self):
-        sprites = self.saw[self.animation_name]
+        sprites = self.sprites[self.animation_name]
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.image = sprites[sprite_index]
         self.animation_count += 1
@@ -82,6 +81,29 @@ class Saw(Object):
 
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
+
+class Spikes(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "spikes")
+        self.sprites = get_sprite_sheets("Traps", "Spikes", width, height)
+        self.image = self.sprites["Idle"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.animation_count = 0
+        self.animation_name = "Idle"
+    def loop(self):
+        sprites = self.sprites[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+
+
+
+
 
 class Item(pygame.sprite.Sprite):
     ANIMATION_DELAY = 2
