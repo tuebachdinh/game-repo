@@ -1,5 +1,5 @@
 import pygame
-from game.load_images import get_sprite_sheets
+from game.load_images import get_sprite_sheets, run_sprites
 
 pygame.init()
 class Enemy(pygame.sprite.Sprite):
@@ -24,7 +24,6 @@ class Enemy(pygame.sprite.Sprite):
         if self.hit_animation > fps:
             self.disappear()
 
-
 class Bat(Enemy):
     def __init__(self, x, y, width, height, name):
         super().__init__(x, y, width, height, name)
@@ -46,6 +45,7 @@ class Bat(Enemy):
         if (self.animation_count // self.ANIMATION_DELAY) >  (len(sprites) * self.delay[self.condition]):
             self.condition = (self.condition + 1) % len(sprite_sheet)
             self.animation_count = 0
+       
         if self.condition == 2:
             self.rect.x -= 2
         elif self.condition == 3:
@@ -53,7 +53,69 @@ class Bat(Enemy):
         
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)
+class Ghost(Enemy):
+    def __init__(self, x, y, width, height, name):
+        super().__init__(x, y, width, height, name)
+        self.SPRITES = get_sprite_sheets("Enemies",name, 44, 30, True)
+        self.condition = 0 
+        self.delay = {0: 2, 1: 1, 2: 3, 3: 1, 4: 3, 5: 2}
+    def update_sprite_sheet(self):
+        sprite_sheet = ["Idle (44x30)_right", "Desappear (44x30)_right", "Appear (44x30)_right", "Desappear (44x30)_left", "Appear (44x30)_left", "Idle (44x30)_left"]
+        if self.hit:
+            sprite_sheet_name = "Hit (44x30)_right"
+        else:
+            sprite_sheet_name = sprite_sheet[self.condition]
+        
+        sprites = self.SPRITES[sprite_sheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.sprite = sprites[sprite_index]
+        self.animation_count += 1
+        if (self.animation_count // self.ANIMATION_DELAY) >  (len(sprites) * self.delay[self.condition]):
+            self.condition = (self.condition + 1) % len(sprite_sheet)
+            self.animation_count = 0
+       
+        if self.condition == 1:
+            self.rect.x -= 16
+        elif self.condition == 3:
+            self.rect.x += 16
+        
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.sprite)
     
+    
+class FatBird(Enemy):
+    def __init__(self, x, y, width, height, name):
+        super().__init__(x, y, width, height, name)
+        self.SPRITES = get_sprite_sheets("Enemies",name, 40, 48, False)
+        self.condition = 0 
+        self.delay = {0: 3, 1: 1/2, 2: 8, 3: 8, 4: 1/2, 5: 3}
+        self.found_player = False
+        self.landed = False
+        self.fall_count = 0
+
+    
+    def update_sprite_sheet(self):
+        if self.found_player: 
+            sprite_sheet_name = "Fall (40x48)"
+        elif self.landed: 
+            sprite_sheet_name = "Idle (40x48)"
+        elif self.hit:
+            sprite_sheet_name = "Hit (40x48)"
+        else:
+            sprite_sheet_name = "Idle (40x48)"
+        
+        run_sprites(self, sprite_sheet_name)
+    
+    def loop(self, fps):
+        if self.found_player:
+            self.rect.y += self.fall_count
+            self.fall_count += 3
+        self.update_sprite_sheet()
+        if self.hit: 
+            self.hit_animation += 1
+        if self.hit_animation > fps:
+            self.disappear()
+
 
 class Rino(Enemy):
     def __init__(self, x, y, width, height, name):
@@ -76,6 +138,7 @@ class Rino(Enemy):
         if (self.animation_count // self.ANIMATION_DELAY) >  (len(sprites) * self.delay[self.condition]):
             self.condition = (self.condition + 1) % len(sprite_sheet)
             self.animation_count = 0
+        
         if self.condition == 1:
             self.rect.x -= 2
         elif self.condition == 2:
@@ -124,15 +187,7 @@ class BlueBird(Enemy):
         else:
             sprite_sheet_name = "Flying (32x32)_" + self.direction
        
-        sprites = self.SPRITES[sprite_sheet_name]
-        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
-        self.sprite = sprites[sprite_index]
-        pygame.transform.scale(self.sprite, (48, 48))
-        self.animation_count += 1
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
-        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.sprite)
+        run_sprites(self, sprite_sheet_name)
     
     def move(self, dx, dy):
         self.rect.x += dx
@@ -169,15 +224,7 @@ class Turtle(BlueBird):
         else:
             sprite_sheet_name = "Idle 1 (44x26)_" + self.direction
        
-        sprites = self.SPRITES[sprite_sheet_name]
-        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
-        self.sprite = sprites[sprite_index]
-        pygame.transform.scale(self.sprite, (48, 48))
-        self.animation_count += 1
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
-        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.sprite)
+        run_sprites(self, sprite_sheet_name)
 
 class Bunny(BlueBird):
     def __init__(self, x, y, width, height, name):
@@ -192,15 +239,7 @@ class Bunny(BlueBird):
         elif self.x_vel != 0:
             sprite_sheet_name = "Run (34x44)_" + self.direction
        
-        sprites = self.SPRITES[sprite_sheet_name]
-        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
-        self.sprite = sprites[sprite_index]
-        pygame.transform.scale(self.sprite, (48, 48))
-        self.animation_count += 1
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
-        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.sprite)
+        run_sprites(self, sprite_sheet_name)
 
 class Radish(BlueBird):
     def __init__(self, x, y, width, height, name):
@@ -215,15 +254,7 @@ class Radish(BlueBird):
         elif self.x_vel != 0:
             sprite_sheet_name = "Run (30x38)_" + self.direction
        
-        sprites = self.SPRITES[sprite_sheet_name]
-        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
-        self.sprite = sprites[sprite_index]
-        pygame.transform.scale(self.sprite, (48, 48))
-        self.animation_count += 1
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
-        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.sprite)
+        run_sprites(self, sprite_sheet_name)
 
 
 
