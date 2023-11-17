@@ -6,6 +6,16 @@ WIDTH, HEIGHT = 1152, 768
 
 pygame.init()
 
+def run_sprites(self, sprite_sheet_name):
+    sprites = self.SPRITES[sprite_sheet_name]
+    sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+    self.sprite = sprites[sprite_index]
+    self.animation_count += 1
+    if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+        self.animation_count = 0
+    self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+    self.mask = pygame.mask.from_surface(self.sprite)
+
 def get_background(name):
     image = pygame.image.load(join("assets", "Background", name))
     _, _, width, height = image.get_rect()
