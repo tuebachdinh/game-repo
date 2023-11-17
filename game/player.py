@@ -1,5 +1,5 @@
 import pygame
-from game.load_images import get_sprite_sheets
+from game.load_images import get_sprite_sheets, run_sprites
 
 pygame.init()
 
@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         if self.teleport_aniamtion >= fps/4:
             self.teleport = False
             self.teleport_aniamtion = 0
-            self.rect.x = 2700
+            self.rect.x = 2600
             
 
         if self.hit_animation >= fps/2:
@@ -105,6 +105,7 @@ class Player(pygame.sprite.Sprite):
             sprites = get_sprite_sheets("MainCharacters", "State", 96, 96, True)["Desappearing (96x96)" + "_" + self.direction]
         else: 
             sprites = self.SPRITES[sprite_sheet_name]
+        
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.sprite = sprites[sprite_index]
         self.animation_count += 1
@@ -134,7 +135,7 @@ class NPC(Player):
         if self.teleport_aniamtion >= fps:
             self.teleport = False
             self.teleport_aniamtion = 0
-            self.rect.x = 2900
+            self.rect.x = 2800
             
         if self.hit_animation >= fps/2:
             self.hit = False
