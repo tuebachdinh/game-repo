@@ -107,7 +107,7 @@ class Item(pygame.sprite.Sprite):
         self.name = name
         self.rect = pygame.Rect(x, y, width, height)
         self.animation_count = 0 
-        self.SPRITES = get_sprite_sheets("Items", "Fruits", 32, 32, False)
+        self.SPRITES = get_sprite_sheets("Items", "Fruits", width, height, False)
         self.hit = False
         self.hit_animation = 0
 

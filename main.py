@@ -181,12 +181,19 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, pet3, pet4, items):
             item.disappear()
             collect_sound.play()
             player.items += 1
+        if item.name == "Checkpoint (Flag Idle)(64x64)":
+            player.make_teleport()
+            teleport_sound.play()
+
     
     for item in to_check_item_npc: 
         if item.name in list_item:
             item.disappear()
             collect_sound.play()
             npc.items += 1
+        if item.name == "Checkpoint (Flag Idle)(64x64)":
+            npc.make_teleport()
+            teleport_sound.play()
     
     for enemy in to_check_pet1:
         if enemy.name in list_enemy :
@@ -262,8 +269,9 @@ def main(window):
     pet2       =  Turtle(block_size*14+8,block_size+45,50,50, "Turtle")
     pet3       =  Bunny(-115,300,50,50,"Bunny")
     pet4       =  Radish(-180,310,50,50,"Radish")
-    items      = [Item(100+ i*50,200,50,50,"Apple") for i in range (8,15)] + [Item(150 + i*50, HEIGHT - block_size * 5,50,50,"Bananas") for i in range (7,14)] + [Item(1665 +i*150, HEIGHT - block_size - 64,50,50, "Kiwi") for i in range (0,3)] + [Item(block_size*14+20, block_size*3,50,50,"Kiwi"),
-                  Item(block_size*24+16, HEIGHT - block_size*4+56,50,50,"Melon"),Item(block_size*30, HEIGHT - block_size*3,50,50,"Bananas")] + [Item(block_size*39+32+100*i, HEIGHT - block_size*5 -64,50,50,"Apple") for i in range(-3, 10)] + [Item(block_size*67 + 50*i, HEIGHT - block_size*2 - 64,50,50,"Pineapple") for i in range (0,5)] + [Checkpoint(100,200,38,38,"Checkpoint (No Flag)")]
+    items      = [Item(100+ i*50,200,32,32,"Apple") for i in range (8,15)] + [Item(150 + i*50, HEIGHT - block_size * 5,32,32,"Bananas") for i in range (7,14)] + [Item(1665 +i*150, HEIGHT - block_size - 64,32,32, "Kiwi") for i in range (0,3)] + [Item(block_size*14+20, block_size*3,32,32,"Kiwi"),
+                  Item(block_size*24+16, HEIGHT - block_size*4+56,32,32,"Melon"),Item(block_size*30, HEIGHT - block_size*3,32,32,"Bananas")] + [Item(block_size*39+32+100*i, HEIGHT - block_size*5 -64,32,32,"Apple") for i in range(-3, 10)] + [Item(block_size*67 + 50*i, HEIGHT - block_size*2 - 64,32,32,"Pineapple") for i in range (0,5)] + [Item(block_size*78,HEIGHT - block_size*6-32,64,64, "Checkpoint (Flag Idle)(64x64)"),
+                    ]
     obstacles  = [Fire(-160, HEIGHT - block_size - 64, 16, 32), Fire(6*block_size +80,HEIGHT - 3*block_size - 64, 16, 32), Spikes(block_size*67,HEIGHT - block_size *2+64,16,16),
                   Fire(-80, HEIGHT - block_size - 64, 16, 32)] + [Saw(400 + 80*i, HEIGHT - block_size - 72, 38, 38) for i in range (0,8)] + [Fire(1600 + i*150, HEIGHT - block_size - 64, 16, 32) for i in range (0, 4)] + [Spikes(block_size*67+16,HEIGHT - block_size *2+64,16,16),
                   Spikes(block_size*67 +32,HEIGHT - block_size *2+64,16,16)] + [Spikes(block_size*67+16*i, HEIGHT - block_size*2+64,16,16) for i in range(3,17)] + [Saw(block_size*68, 320,38,38)]
@@ -283,7 +291,7 @@ def main(window):
     obj_round2 = [Block(block_size*(28+i),HEIGHT-block_size*i,block_size) for i in range (2,6)] + [Block(block_size*(34+i), HEIGHT - block_size*5, block_size) for i in range (0,10)] + [Block2(block_size*(60+i), HEIGHT - block_size, block_size) for i in range (0, 16)] + [Block(block_size*47,HEIGHT - block_size*4,block_size),
                   Block(block_size*51, HEIGHT - block_size*5, block_size), Block(block_size*55,HEIGHT - block_size*3,block_size), Block2(block_size*65, HEIGHT - block_size*2, block_size),Block2(block_size*67, HEIGHT - block_size*4, block_size),
                   Block(block_size*58, HEIGHT- block_size*5,block_size)] + [Block2(block_size*(60+i),0,block_size) for i in range(0,16)] + [Block2(block_size*68, HEIGHT - block_size*4, block_size), Block2(block_size*69, HEIGHT - block_size*4, block_size),
-                  Block2(block_size*75, HEIGHT - block_size*2,block_size )] + [Block2(block_size*(76+i), HEIGHT - block_size*(3+i), block_size) for i in range(0,4)]
+                  Block2(block_size*75, HEIGHT - block_size*2,block_size )] + [Block2(block_size*(76+i), HEIGHT - block_size*(3+i), block_size) for i in range(0,3)]
     
     
     objects    = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks, *obj_round1, *obj_round2]
