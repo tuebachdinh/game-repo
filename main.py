@@ -1,10 +1,12 @@
 import pygame
+import mysql.connector
 from os import listdir
 from os.path import isfile, join
 from game.player import Player, NPC
 from game.enemy import Bat, BlueBird, Rino, Chameleon, Turtle, Bunny, Radish, FatBird, Ghost
 from game.load_images import get_background, get_condition_bar
 from game.object import Block, Brick, Item, Fire, Saw, Block2, Spikes, Checkpoint
+from datetime import datetime
 
 pygame.init()
 
@@ -18,6 +20,8 @@ pygame.mixer.music.play(-1)
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tue_PyGame")
 isStart = True
+user_name = ""
+start_time = pygame.time.get_ticks()
 
 
 # Handle interactions between player, objects, pets and enemies
@@ -164,7 +168,7 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, pet3, pet4, items):
 
     list_enemy = ["Bat", "Rino", "Chameleon", "FatBird", "Ghost"]
     list_obstalce = ["fire", "saw", "spikes"]
-    list_item = ["Apple", "Bananas", "Kiwi", "Melon", "Pineapple"]
+    list_item = ["Apple", "Bananas", "Kiwi", "Melon", "Pineapple", "Checkpoint (Flag Idle)(64x64)"]
     
     for obj in to_check_npc:
         if obj.name in (list_enemy + list_obstalce):
@@ -181,19 +185,12 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, pet3, pet4, items):
             item.disappear()
             collect_sound.play()
             player.items += 1
-        if item.name == "Checkpoint (Flag Idle)(64x64)":
-            player.make_teleport()
-            teleport_sound.play()
-
     
     for item in to_check_item_npc: 
         if item.name in list_item:
             item.disappear()
             collect_sound.play()
             npc.items += 1
-        if item.name == "Checkpoint (Flag Idle)(64x64)":
-            npc.make_teleport()
-            teleport_sound.play()
     
     for enemy in to_check_pet1:
         if enemy.name in list_enemy :
@@ -229,8 +226,6 @@ def handle_move(player, npc, objects, enemies, pet1, pet2, pet3, pet4, items):
         if enemy.name == "FatBird" and (player.rect.x == enemy.rect.x or npc.rect.x == enemy.rect.x):
             enemy.found_player = True
     
-
-
 # Draw everything on the screen
 def draw(window, background, player, npc, enemies, pet1, pet2, pet3, pet4, items, 
          objects, offset_x, background_scroll_x, condition_bar_player, condition_bar_npc):
@@ -291,7 +286,7 @@ def main(window):
     obj_round2 = [Block(block_size*(28+i),HEIGHT-block_size*i,block_size) for i in range (2,6)] + [Block(block_size*(34+i), HEIGHT - block_size*5, block_size) for i in range (0,10)] + [Block2(block_size*(60+i), HEIGHT - block_size, block_size) for i in range (0, 16)] + [Block(block_size*47,HEIGHT - block_size*4,block_size),
                   Block(block_size*51, HEIGHT - block_size*5, block_size), Block(block_size*55,HEIGHT - block_size*3,block_size), Block2(block_size*65, HEIGHT - block_size*2, block_size),Block2(block_size*67, HEIGHT - block_size*4, block_size),
                   Block(block_size*58, HEIGHT- block_size*5,block_size)] + [Block2(block_size*(60+i),0,block_size) for i in range(0,16)] + [Block2(block_size*68, HEIGHT - block_size*4, block_size), Block2(block_size*69, HEIGHT - block_size*4, block_size),
-                  Block2(block_size*75, HEIGHT - block_size*2,block_size )] + [Block2(block_size*(76+i), HEIGHT - block_size*(3+i), block_size) for i in range(0,3)]
+                  Block2(block_size*75, HEIGHT - block_size*2,block_size )] + [Block2(block_size*(76+i), HEIGHT - block_size*(3+i), block_size) for i in range(0,3)] + [Block(block_size*((80 +i)), HEIGHT - block_size, block_size) for i in range (2,10)]
     
     
     objects    = [*wall_1,*wall_2,*wall_3, *wall_4, *obstacles, *bricks, *obj_round1, *obj_round2]
@@ -304,7 +299,7 @@ def main(window):
 
     run = True
     while run:
-
+        replay_times = 0
         player_condition_bar = get_condition_bar(player, "player")
         npc_condition_bar = get_condition_bar(npc, "npc")
         clock.tick(FPS)
@@ -371,29 +366,55 @@ def main(window):
 
             pygame.display.update()
             for event in pygame.event.get():
+                
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if restart_rect.collidepoint(event.pos):
                         main(window)
+                        replay_times += 1
+                    
                     elif quit_rect.collidepoint(event.pos):
+
+                        db_config = {
+                            'host': 'localhost',
+                            'user': 'root',
+                            'password': 'Bachtue2005@',
+                            'database': 'user_data',
+                        }
+                        connection = mysql.connector.connect(**db_config)
+                        cursor = connection.cursor()
+                        insert_query = "INSERT INTO user_statistics VALUES (default, %s, %s, %s, %s, %s, %s)"
+                        cursor.execute(insert_query, (user_name, replay_times, player.rect.x, player.items, (pygame.time.get_ticks() - start_time)//1000, datetime.now().date()))
+                        connection.commit()
+                        cursor.close()
+                        connection.close()
+
                         pygame.quit()
                         quit()
         
-
 # Menu at the beginning of the game
 while isStart:
     start = pygame.transform.scale(pygame.image.load(join("state","start.png")), (240,80))
     start_rect = start.get_rect(center = (600,425))
+    typing = pygame.transform.scale(pygame.image.load(join("state","typing.png")), (300,100))
     background_start = pygame.transform.scale(pygame.image.load(join("state","background_start.jpeg")), (1200,750))
     window.blit(background_start, (0,0))
     window.blit(start, (start_rect.x, start_rect.y))
     text1 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 20).render("DIRECTED BY TUE DINH (TOBY)", True, "Black")
     text2 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 20).render("NOVEMBER 2023", True, "Black")
-            
+    text3 = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 35).render("Type your name: ", True, "Black")
+    input_text = pygame.font.Font(join("assets","Font", "Pixeltype.ttf"), 32).render(user_name, True, "Black")
+    
     window.blit(text1, (10,10))
     window.blit(text2, (30,30))
+
+    window.blit(typing,(450,280))
+    window.blit(text3, (480,300))
+    window.blit(input_text, (480,340))
+    
     pygame.display.update()
 
     key = pygame.key.get_pressed()
@@ -402,7 +423,19 @@ while isStart:
             if start_rect.collidepoint(event.pos):
                 main(window)
                 isStart = False
-        if event.type == pygame.QUIT:
+     
+            
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                main(window)
+                isStart = False
+
+            elif event.key == pygame.K_BACKSPACE:
+                user_name = user_name[:-1]
+            else:
+                user_name += event.unicode
+        
+        elif event.type == pygame.QUIT:
             pygame.quit()
             quit()
 
