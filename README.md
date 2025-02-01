@@ -1,8 +1,8 @@
-# BlueVenture - Finding your lover !
+# BlueVenture - 2D Adventure Game Engine Simulation
 
 **Overview**
 
-Welcome to "BlueVenture" ! This Python game, powered by the Pygame library, takes you on an animated adventure featuring different characters based on your choice. Brace yourself for a thrilling journey filled with enemies, pets, obstacles, and finding your lover - PinkAce ❤️. 
+Welcome to "BlueVenture" ! This Python game, powered by the Pygame library, takes you on an animated adventure featuring different characters based on your choice. Brace yourself for a thrilling journey filled with enemies, pets, obstacles, and finding your lover - PinkAce. 
 
 Your mission: guide the player to the your lover's destination while avoiding enemies and obstacles 🪨, all while preserving your three hearts. Meet PinkAce, teleport to a new state, and face fresh challenges!🚀🤖
 
